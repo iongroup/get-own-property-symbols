@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Get-own-property-symbols by WebReflection</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Get-own-property-symbols</h1>
+        <p>ES6 Object.getOwnPropertySymbols partial polyfill</p>
+
+        <p class="view"><a href="https://github.com/WebReflection/get-own-property-symbols">View the Project on GitHub <small>WebReflection/get-own-property-symbols</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/WebReflection/get-own-property-symbols/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/WebReflection/get-own-property-symbols/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/WebReflection/get-own-property-symbols">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a id="get-own-property-symbols" class="anchor" href="#get-own-property-symbols" aria-hidden="true"><span class="octicon octicon-link"></span></a>get-own-property-symbols</h1>
+
+<p><a href="http://travis-ci.org/WebReflection/get-own-property-symbols"><img src="https://secure.travis-ci.org/WebReflection/get-own-property-symbols.png" alt="build status"></a></p>
+
+<p>This is a widely compatible, Mobile friendly, and zero dependencies partial polyfill for <code>Object.getOwnPropertySymbols</code>.</p>
+
+<div class="highlight highlight-js"><pre><span class="pl-k">var</span> getOwnPropertySymbols <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>get-own-property-symbols<span class="pl-pds">'</span></span>);
+
+<span class="pl-k">var</span> o <span class="pl-k">=</span> {};
+<span class="pl-k">var</span> s <span class="pl-k">=</span> Symbol();
+
+o[s] <span class="pl-k">=</span> <span class="pl-c1">123</span>;
+
+<span class="pl-c1">Object</span>.getOwnPropertyNames(o);  <span class="pl-c">// []</span>
+getOwnPropertySymbols(o);       <span class="pl-c">// [s]</span>
+
+<span class="pl-c">// same as</span>
+<span class="pl-c1">Object</span>.getOwnPropertySymbols(o);<span class="pl-c">// [s]</span></pre></div>
+
+<p>This module brings in a global <code>Symbol</code> initializer too, together with <code>Symbol.for</code> and <code>Symbol.keyFor</code> methods.</p>
+
+<div class="highlight highlight-js"><pre><span class="pl-k">var</span> s <span class="pl-k">=</span> Symbol.for(<span class="pl-s"><span class="pl-pds">'</span>me<span class="pl-pds">'</span></span>);
+Symbol.for(<span class="pl-s"><span class="pl-pds">'</span>me<span class="pl-pds">'</span></span>) <span class="pl-k">===</span> s; <span class="pl-c">// true</span>
+
+Symbol.keyFor(s); <span class="pl-c">// 'me'</span></pre></div>
+
+<h4>
+<a id="caveat" class="anchor" href="#caveat" aria-hidden="true"><span class="octicon octicon-link"></span></a>Caveat</h4>
+
+<p>This partial polyfill <em>will not work with <code>null</code> objects</em>, and even if <a href="https://gist.github.com/WebReflection/56d04ccb1e5b0e50c121#comment-1426442">it's possible to make it work</a> it's not worth the hassle.</p>
+
+<div class="highlight highlight-js"><pre><span class="pl-k">var</span> o <span class="pl-k">=</span> <span class="pl-c1">Object</span>.create(<span class="pl-c1">null</span>);
+<span class="pl-k">var</span> s <span class="pl-k">=</span> Symbol();
+
+o[s] <span class="pl-k">=</span> <span class="pl-c1">123</span>;
+
+<span class="pl-c">// not set as Symbol, just as generic key</span>
+<span class="pl-c1">Object</span>.keys(o); <span class="pl-c">// [s]</span></pre></div>
+
+<h4>
+<a id="more-details" class="anchor" href="#more-details" aria-hidden="true"><span class="octicon octicon-link"></span></a>More details</h4>
+
+<p>There are alternatives to partially polyfill <a href="https://github.com/medikoo/es6-symbol#es6-symbol">Symbol only</a> and the main difference is that whit <code>get-own-property-symbols</code> you actually have <code>Object.getOwnPropertySymbols</code> functionality and <code>Object.getOwnPropertyNames</code> will never show Symbols too.</p>
+
+<p>Accordingly, if you are looking for a more consistent approach with ES6 specifications, use this module, otherwise feel free to go for the <code>Symbol</code> only.</p>
+
+<p>I will try to check with <a href="https://github.com/medikoo" class="user-mention">@medikoo</a> if we could simply merge these two approaches and have a better sham "to rule them all".</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/WebReflection">WebReflection</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
