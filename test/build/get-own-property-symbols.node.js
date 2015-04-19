@@ -49,23 +49,20 @@ THE SOFTWARE.
     ObjectProto = Object.prototype,
     hOP = ObjectProto.hasOwnProperty,
     pIE = ObjectProto[PIE],
-    addInternalIfNeeded = function (o) {
-      if (!(internalSymbol in o)) {
+    indexOf = Array.prototype.indexOf || function (v) {
+      for (var i = this.length; i-- && this[i] !== v;) {}
+      return i;
+    },
+    addInternalIfNeeded = function (o, uid, enumerable) {
+      if (!hOP.call(o, internalSymbol)) {
         defineProperty(o, internalSymbol, {
           enumerable: false,
           configurable: false,
           writable: false,
-          value: []
+          value: {}
         });
       }
-    },
-    addOrModifyEnumerability = function (pairs, uid, enumerable) {
-      var i = pairs.indexOf(uid);
-      if (i < 0) {
-        pairs.push(uid, enumerable);
-      } else {
-        pairs[i + 1] = enumerable;
-      }
+      o[internalSymbol]['@@' + uid] = enumerable;
     },
     copyAsNonEnumerable = function (descriptor) {
       var newDescriptor = create(descriptor);
@@ -93,8 +90,7 @@ THE SOFTWARE.
             writable: true,
             value: value
           });
-          addInternalIfNeeded(this);
-          addOrModifyEnumerability(this[internalSymbol], uid, true);
+          addInternalIfNeeded(this, uid, true);
         }
       };
       defineProperty(ObjectProto, uid, descriptor);
@@ -108,13 +104,12 @@ THE SOFTWARE.
         prefix.concat(description || '', random, ++id)
       );
     },
-    $defineProperty = function defineProperty(o, key, descriptor) {
+    $defineProperty = function defineProp(o, key, descriptor) {
       var uid = '' + key;
       if (onlySymbols(uid)) {
         setDescriptor(o, uid, descriptor.enumerable ?
             copyAsNonEnumerable(descriptor) : descriptor);
-        addInternalIfNeeded(o);
-        addOrModifyEnumerability(o[internalSymbol], uid, !!descriptor.enumerable);
+        addInternalIfNeeded(o, uid, !!descriptor.enumerable);
       } else {
         defineProperty(o, key, descriptor);
       }
@@ -155,7 +150,7 @@ THE SOFTWARE.
     var uid = '' + key;
     return onlySymbols(uid) ? (
       hOP.call(this, uid) &&
-      this[internalSymbol][this[internalSymbol].indexOf(uid) + 1]
+      this[internalSymbol]['@@' + uid]
     ) : pIE.call(this, key);
   };
   defineProperty(ObjectProto, PIE, descriptor);
@@ -174,7 +169,7 @@ THE SOFTWARE.
   descriptor.value = function (symbol) {
     return (
       (prefix + prefix) === symbol.slice(0, prefixLength * 2) &&
-      -1 < gOPN(ObjectProto).indexOf(symbol)
+      -1 < indexOf.call(gOPN(ObjectProto), symbol)
     ) ?
       symbol.slice(prefixLength * 2, -random.length) :
       void 0
