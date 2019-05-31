@@ -51,10 +51,6 @@ THE SOFTWARE.
     hOP = ObjectProto.hasOwnProperty,
     pIE = ObjectProto[PIE],
     toString = ObjectProto.toString,
-    indexOf = Array.prototype.indexOf || function (v) {
-      for (var i = this.length; i-- && this[i] !== v;) {}
-      return i;
-    },
     addInternalIfNeeded = function (o, uid, enumerable) {
       if (!hOP.call(o, internalSymbol)) {
         defineProperty(o, internalSymbol, {
@@ -216,7 +212,7 @@ THE SOFTWARE.
   defineProperty(Object, GOPD, descriptor);
 
   descriptor.value = function (proto, descriptors) {
-    return arguments.length === 1 ?
+    return (arguments.length === 1 || typeof descriptors === "undefined") ?
       create(proto) :
       createWithSymbols(proto, descriptors);
   };
@@ -255,7 +251,7 @@ THE SOFTWARE.
 
 }(Object, 'getOwnPropertySymbols'));
 
-(function (O, S) {
+(function (O, Symbol) {
   var
     dP = O.defineProperty,
     ObjectProto = O.prototype,
